@@ -3,6 +3,7 @@ from telebot import types
 from tg_token import token
 def telegram_bot(token):
     bot = telebot.TeleBot(token)
+    prev_message = ''
     @bot.message_handler(commands= ['shop', 'shopping'])
     def working(message):
         markup_inline = types.InlineKeyboardMarkup()
@@ -16,18 +17,17 @@ def telegram_bot(token):
                          reply_markup = markup_inline)
 
     @bot.callback_query_handler(func=lambda call: True)
-    def answer(call):
-        if call.data.lower() == 'create':
-            bot.send_message(call.message.chat.id, "Ща")
+    def cart_answer(call):
+        if call.data == 'create':
+            prev_message = 'create'
+            bot.send_message(call.message.chat.id, 'Напишите пользователя')
+
+
+
+
     @bot.message_handler(commands=['start'])
     def start_message(message):
-        bot.send_message(message.chat.id, "Приветсвую тебя!")
-    @bot.message_handler(content_types=["text"])
-    def send_text(message):
-        if message.text.lower() == "давай":
-            bot.send_message(message.chat.id, "ну выбирай давай")
-        else:
-            bot.send_message(message.chat.id, "че говоришь?")
+        bot.send_message(message.chat.id, "Приветсвую тебя! Надеюсь я смогу помочь вам в организации покупок.")
 
 
     bot.polling()
