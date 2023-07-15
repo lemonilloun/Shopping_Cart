@@ -53,10 +53,24 @@ def telegram_bot(token):
         bot.register_next_step_handler(msg, cart_packing)
 
 
+    def cart_processing(message):
+        if message.text == "Добавить пользователя":
+            msg = bot.send_message(message.chat.id, "Напишите нового пользователя")
+            bot.register_next_step_handler(msg, cart_creation)
+        elif message.text == "Вывести итоговый чек":
+            print(cart.get_info())
+            person.clear()
+            bot.send_message(message.chat.id, "Приятных покупок!\nДля создания новой корзины пропишите в чат /shop или /shopping")
 
     def cart_packing(message):
         if message.text == "Завершить список покупок для пользователя":
-            print(cart.get_info())
+
+            mrkp = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            it1 = types.KeyboardButton("Добавить пользователя")
+            it2 = types.KeyboardButton("Вывести итоговый чек")
+            mrkp.add(it1, it2)
+            msg = bot.send_message(message.chat.id, "Что сделать для текущей корзины?", reply_markup=mrkp)
+            bot.register_next_step_handler(msg, cart_processing)
         else:
             shop_list = message.text + "\n"
             cart.add_list_of_products(person[-1], shop_list)
