@@ -60,7 +60,7 @@ def telegram_bot(token):
         elif message.text == "Вывести итоговый чек":
             print(cart.get_info())
             person.clear()
-            bot.send_message(message.chat.id, "Приятных покупок!\nДля создания новой корзины пропишите в чат /shop или /shopping")
+            bot.send_message(message.chat.id, "Приятных покупок!\nДля создания новой корзины пропишите в чат /shop или /shopping", reply_markup=types.ReplyKeyboardRemove())
 
     def cart_packing(message):
         if message.text == "Завершить список покупок для пользователя":
