@@ -79,6 +79,7 @@ def telegram_bot(token):
             bot.register_next_step_handler(msg, cart_creation)
         elif message.text == "Вывести итоговый чек":
             print(cart.get_info())
+            #res = working(cart.get_info())
             person.clear()
             cart.set_work_id(-1)
             bot.send_message(message.chat.id, "Приятных покупок!\nДля создания новой корзины пропишите в чат /shop или /shopping", reply_markup=types.ReplyKeyboardRemove())
