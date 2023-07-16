@@ -8,6 +8,14 @@ class Cart(object):
     cart_list = {}
     cart_id = 0
     curr_work_id = -1
+    split_prod_list = {}
+    split_list = "" #обновляемое значение
+
+    def set_split_list(self, lst):
+        self.split_list = lst
+
+    def get_splt_list(self):
+        return self.split_list
 
     def set_work_id(self, new_id):
         self.curr_work_id = new_id
@@ -34,14 +42,20 @@ class Cart(object):
         if person in self.cart_list:
             self.cart_list[person] = ""
 
+    def split_product(self, shop_list, persons):
+        self.split_prod_list[shop_list] = persons
+
+
     def clear(self):
         self.cart_id = 0
         self.chat_id = 0
         self.cart_list = {}
         self.curr_work_id = -1
+        self.split_list = ""
 
     def get_info(self):
-        res = {"chat_id":self.chat_id, "cart_id":self.cart_id, "persons" : {per:lst for (per, lst) in self.cart_list.items()}}
+        res = {"chat_id":self.chat_id, "cart_id":self.cart_id, "persons" : {per:lst for (per, lst) in self.cart_list.items()},
+               "splits" : {prod:per for (prod, per) in self.split_prod_list.items()}}
         return res
 
     def get_catr_id(self):
@@ -54,6 +68,7 @@ class Cart(object):
 def telegram_bot(token):
     bot = telebot.TeleBot(token)
     person = []
+    splt_persons = []
     cart = Cart()
 
 
@@ -61,7 +76,7 @@ def telegram_bot(token):
         person.append(message.text)
         bot.send_message(message.chat.id, f'Создание списка покупок для пользователя {person[cart.get_work_id()]}')
         msg = bot.send_message(message.chat.id,
-                         "Напишите ниже список покупок для пользователя.\n\nПришлите список в формате: \n<название продукта>-<стоимость> -<количество> ( по умолчанию количество равно 1)\n\nПример1: Молоко-67\nПример2: Хлеб-42-3")
+                         "Напишите ниже список покупок для пользователя.\n\nПришлите список в формате: \n<название продукта>-<цена> -<количество> ( по умолчанию количество равно 1)\n\nПример1: Молоко-67\nПример2: Хлеб-42-3")
         bot.register_next_step_handler(msg, cart_packing)
 
 
@@ -91,9 +106,35 @@ def telegram_bot(token):
             msg = bot.send_message(message.chat.id, "Выберете, для кого изменить список покупок", reply_markup=mrkp)
             bot.register_next_step_handler(msg, cart_editing)
 
+    def split_products(message):
+        splt_persons.append(person[cart.get_work_id()])
+        splt_persons.append(message.text)
+        mrkp = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        mrkp.add(types.KeyboardButton("Разделить продукт c кем-то еще"), types.KeyboardButton("Закончить список"))
+        msg = bot.send_message(message.chat.id, "Продукт будет разделен на нексолько пользователей", reply_markup=mrkp)
+        bot.register_next_step_handler(msg, split_handler)
+
+
+    def split_handler(message):
+        if message.text == "Разделить продукт c кем-то еще":
+            mrkp = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            for i in range(len(person)):
+                mrkp.add(types.KeyboardButton(str(person[i])))
+            msg = bot.send_message(message.chat.id, "Выберите или напишите в чат с кем разделить стоимость продукта",
+                                   reply_markup=mrkp)
+            bot.register_next_step_handler(msg, split_products)
+        elif message.text == "Закончить список":
+            cart.split_product(cart.get_splt_list(), splt_persons)
+            splt_persons.clear()
+            mrkp = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            mrkp.add(types.KeyboardButton("Завершить список покупок"))
+            msg = bot.send_message(message.chat.id, "Для перехода в меню корзины нажмите на кнопку Завершения списка покупок", reply_markup=mrkp)
+            bot.register_next_step_handler(msg, cart_packing)
+
+
+
     def cart_packing(message):
         if message.text == "Завершить список покупок":
-
             mrkp = types.ReplyKeyboardMarkup(resize_keyboard=True)
             it1 = types.KeyboardButton("Добавить пользователя")
             it2 = types.KeyboardButton("Вывести итоговый чек")
@@ -101,14 +142,23 @@ def telegram_bot(token):
             mrkp.add(it1, it2, it3)
             msg = bot.send_message(message.chat.id, "Что сделать для текущей корзины?", reply_markup=mrkp)
             bot.register_next_step_handler(msg, cart_processing)
+
+        elif message.text == "Разделить продукт":
+            mrkp = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            for i in range(len(person)):
+                mrkp.add(types.KeyboardButton(str(person[i])))
+            msg = bot.send_message(message.chat.id, "Выберите или напишите в чат с кем разделить стоимость продукта", reply_markup=mrkp)
+            bot.register_next_step_handler(msg, split_products)
+
         else:
             shop_list = message.text + "\n"
             cart.add_list_of_products(person[cart.get_work_id()], shop_list)
+            cart.set_split_list(shop_list)
             print(person[-1])
             print(shop_list)
             rmk = types.ReplyKeyboardMarkup(resize_keyboard=True)
-            rmk.add(types.KeyboardButton("Завершить список покупок"))
-            msg = bot.send_message(message.chat.id, "Нажмите на кнопку для завершения списка", reply_markup=rmk)
+            rmk.add(types.KeyboardButton("Завершить список покупок"), types.KeyboardButton("Разделить продукт"))
+            msg = bot.send_message(message.chat.id, "Завершение списка покупок или разделение стоимости продуктас другим пользователем", reply_markup=rmk)
             bot.register_next_step_handler(msg, cart_packing)
 
 
