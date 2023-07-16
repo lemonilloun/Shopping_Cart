@@ -78,8 +78,8 @@ def telegram_bot(token):
             msg = bot.send_message(message.chat.id, "Напишите нового пользователя", reply_markup=types.ReplyKeyboardRemove())
             bot.register_next_step_handler(msg, cart_creation)
         elif message.text == "Вывести итоговый чек":
-            print(cart.get_info())
-            #res = working(cart.get_info())
+            res = writting(cart.get_info())
+            bot.send_message(message.chat.id, res)
             person.clear()
             cart.set_work_id(-1)
             bot.send_message(message.chat.id, "Приятных покупок!\nДля создания новой корзины пропишите в чат /shop или /shopping", reply_markup=types.ReplyKeyboardRemove())

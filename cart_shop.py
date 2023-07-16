@@ -2,6 +2,7 @@ def writting(cart_list):
     res = ""
     personal_cart = ""
     delim = "------------------------------------"
+    delim_2 = "###################################"
 
     chat_id = cart_list["chat_id"]
     cart_id = cart_list["cart_id"]
@@ -33,13 +34,22 @@ def writting(cart_list):
                 sum_per_person += int(prod[1])
         personal_cart += "\n" + str(sum_per_person) + "\n" + delim + "\n"
         total_sum += sum_per_person
-    print(personal_cart)
+    #Header
+    res += "Коризина № " + str(cart_id) + "\n" + delim_2 + "\n"
+
+    #Main
+    res += personal_cart + delim_2 + "\n"
+
+    #Total
+    res += "Total: " + str(total_sum)  + "\n"
+    if k > 1:
+        res += "Если скидываться: " + str(total_sum / k)
 
         #personal_cart += delim + str(per) + "\n" + cart_list[per] + delim
 
 
-    #return res
+    return res
 
 
-cart_list = {'chat_id': 546077575, 'cart_id': 19, 'persons': {'тома': 'молоко-45-2\nхлеб-76-1\nтрубочка со сгущенкой-103-2\n', 'лесЯ': 'киндеры-516-3\n'}}
-print(writting(cart_list))
+#cart_list = {'chat_id': 546077575, 'cart_id': 19, 'persons': {'тома': 'молоко-45-2\nхлеб-76-1\nтрубочка со сгущенкой-103-2\n', 'лесЯ': 'киндеры-516-3\n'}}
+#print(writting(cart_list))
