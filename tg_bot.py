@@ -118,9 +118,9 @@ def telegram_bot(token):
         person.clear()
         markup_inline = types.ReplyKeyboardMarkup(resize_keyboard=True)
         item_create_cart = types.KeyboardButton("Создать")
-        item_change_cart = types.KeyboardButton("Редактировать")
-        markup_inline.add(item_create_cart, item_change_cart)
-        msg = bot.send_message(message.chat.id, "Что бы вы хотели сделать c корзиной?",
+        #item_change_cart = types.KeyboardButton("Редактировать")
+        markup_inline.add(item_create_cart)
+        msg = bot.send_message(message.chat.id, "Что бы вы хотели сделать c корзиной?\nВ будущем опции будут поплняться.",
                          reply_markup = markup_inline)
         bot.register_next_step_handler(msg, cart_answer)
 

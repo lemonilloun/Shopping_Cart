@@ -34,6 +34,7 @@ def writting(cart_list):
                 sum_per_person += int(prod[1])
         personal_cart += "\n" + str(sum_per_person) + "\n" + delim + "\n"
         total_sum += sum_per_person
+        sum_per_person = 0
     #Header
     res += "Коризина № " + str(cart_id) + "\n" + delim_2 + "\n"
 
