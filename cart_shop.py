@@ -2,7 +2,7 @@ def writting(cart_list):
     res = ""
     personal_cart = ""
     delim = "------------------------------------"
-    delim_2 = "###################################"
+    delim_2 = "##################################"
 
     chat_id = cart_list["chat_id"]
     cart_id = cart_list["cart_id"]
@@ -27,10 +27,10 @@ def writting(cart_list):
         personal_cart += "\n" + per + ":\n"
         for prod in result:
             if len(prod) == 3:
-                personal_cart += prod[0] + " (" + prod[2] + " шт.)" + " - " + str(int(prod[2]) * int(prod[1])) + "р." + "\n"
+                personal_cart += prod[0] + " (" + prod[2] + " шт.)" + " - " + str(int(prod[2]) * int(prod[1])) + "р.\n"
                 sum_per_person += int(prod[2]) * int(prod[1])
             elif len(prod) == 2:
-                personal_cart += prod[0] + " - " + prod[1]
+                personal_cart += prod[0] + " - " + prod[1] + "р.\n"
                 sum_per_person += int(prod[1])
         personal_cart += "\n" + str(sum_per_person) + "\n" + delim + "\n"
         total_sum += sum_per_person
@@ -41,9 +41,9 @@ def writting(cart_list):
     res += personal_cart + delim_2 + "\n"
 
     #Total
-    res += "Total: " + str(total_sum)  + "\n"
+    res += "Total: " + str(total_sum)  + "р.\n"
     if k > 1:
-        res += "Если скидываться: " + str(total_sum / k)
+        res += "Если скидываться: " + str(total_sum / k) + "р."
 
         #personal_cart += delim + str(per) + "\n" + cart_list[per] + delim
 

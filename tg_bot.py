@@ -56,6 +56,7 @@ def telegram_bot(token):
     person = []
     cart = Cart()
 
+
     def cart_creation(message):
         person.append(message.text)
         bot.send_message(message.chat.id, f'Создание списка покупок для пользователя {person[cart.get_work_id()]}')
