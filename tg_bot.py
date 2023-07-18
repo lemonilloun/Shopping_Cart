@@ -145,10 +145,9 @@ def telegram_bot(token):
         elif message.text == "Закончить список":
             cart.split_product(cart.get_splt_list(), cart.get_splt_persons())
             cart.set_split_list("")
-            cart.set_splt_persons("0")
             mrkp = types.ReplyKeyboardMarkup(resize_keyboard=True)
             mrkp.add(types.KeyboardButton("Завершить список покупок"))
-            msg = bot.send_message(message.chat.id, "Для перехода в меню корзины нажмите на кнопку Завершения списка покупок", reply_markup=mrkp)
+            msg = bot.send_message(message.chat.id, "Для перехода в меню корзины нажмите на кнопку (Завершение списка покупок)", reply_markup=mrkp)
             bot.register_next_step_handler(msg, cart_packing)
 
 
@@ -176,7 +175,7 @@ def telegram_bot(token):
             cart.set_split_list(shop_list)
             rmk = types.ReplyKeyboardMarkup(resize_keyboard=True)
             rmk.add(types.KeyboardButton("Завершить список покупок"), types.KeyboardButton("Разделить продукт"))
-            msg = bot.send_message(message.chat.id, "Завершение списка покупок или разделение стоимости продуктас другим пользователем", reply_markup=rmk)
+            msg = bot.send_message(message.chat.id, "Завершение списка покупок или разделение стоимости продукта с другим пользователем", reply_markup=rmk)
             bot.register_next_step_handler(msg, cart_packing)
 
 
