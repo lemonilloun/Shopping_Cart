@@ -87,6 +87,42 @@ def telegram_bot(token):
     #splt_persons = []
     cart = Cart()
 
+    def check_prod_list(shop_list):
+        enters = shop_list.count('\n')
+        tabs = shop_list.count('-')
+        res = []
+        if tabs < 1:
+            return False
+
+        if enters > 1:
+            lines = shop_list.split('\n')
+        # lines = [line for line in lines if line]
+        else:
+            lines = [shop_list[0:-1]]
+
+        for prods in lines:
+            parts = prods.split('-')
+            if len(parts) == 3:
+                if (not parts[0].isdigit()) and parts[1].isdigit() and parts[2].isdigit():
+                    pass
+                elif parts[0].isdigit():
+                    return False
+                elif not parts[1].isdigit():
+                    return False
+                elif not parts[2].isdigit():
+                    return False
+            elif len(parts) == 2:
+                if (not parts[0].isdigit()) and parts[1].isdigit():
+                    pass
+                elif parts[0].isdigit():
+                    return False
+                elif not parts[1].isdigit():
+                    return False
+            else:
+                return False
+
+        return True
+
 
     def cart_creation(message):
         person.append(message.text)
@@ -136,8 +172,9 @@ def telegram_bot(token):
     def split_handler(message):
         if message.text == "Разделить продукт c кем-то еще":
             mrkp = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            print(person[cart.get_work_id()])
             for i in range(len(person)):
-                if person[i] != person[cart.get_work_id()]:
+                if person[i] != person[cart.get_work_id()] and person[i] not in cart.get_splt_persons():
                     mrkp.add(types.KeyboardButton(str(person[i])))
             msg = bot.send_message(message.chat.id, "Выберите или напишите в чат с кем разделить стоимость продукта",
                                    reply_markup=mrkp)
@@ -165,18 +202,23 @@ def telegram_bot(token):
         elif message.text == "Разделить продукт":
             mrkp = types.ReplyKeyboardMarkup(resize_keyboard=True)
             for i in range(len(person)):
-                mrkp.add(types.KeyboardButton(str(person[i])))
+                if person[i] != person[cart.get_work_id()]:
+                    mrkp.add(types.KeyboardButton(str(person[i])))
             msg = bot.send_message(message.chat.id, "Выберите или напишите в чат с кем разделить стоимость продукта", reply_markup=mrkp)
             bot.register_next_step_handler(msg, split_products)
 
         else:
             shop_list = message.text + "\n"
-            cart.add_list_of_products(person[cart.get_work_id()], shop_list)
-            cart.set_split_list(shop_list)
-            rmk = types.ReplyKeyboardMarkup(resize_keyboard=True)
-            rmk.add(types.KeyboardButton("Завершить список покупок"), types.KeyboardButton("Разделить продукт"))
-            msg = bot.send_message(message.chat.id, "Завершение списка покупок или разделение стоимости продукта с другим пользователем", reply_markup=rmk)
-            bot.register_next_step_handler(msg, cart_packing)
+            if check_prod_list(shop_list):
+                cart.add_list_of_products(person[cart.get_work_id()], shop_list)
+                cart.set_split_list(shop_list)
+                rmk = types.ReplyKeyboardMarkup(resize_keyboard=True)
+                rmk.add(types.KeyboardButton("Завершить список покупок"), types.KeyboardButton("Разделить продукт"))
+                msg = bot.send_message(message.chat.id, "Завершение списка покупок или разделение стоимости продукта с другим пользователем", reply_markup=rmk)
+                bot.register_next_step_handler(msg, cart_packing)
+            else:
+                msg = bot.send_message(message.chat.id,"Некорректно введен список. Пожалуйста введите список покупок в формате: \n<название продукта>-<цена> -<количество>")
+                bot.register_next_step_handler(msg, cart_packing)
 
 
 

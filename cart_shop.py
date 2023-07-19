@@ -17,7 +17,7 @@ def writting(cart_list):
     sum_per_person = 0
     splt_check = bool(split_products_list)
 
-
+    #Обработка списка для скидывающихся
     for prod in split_products_list:
         lines = prod.split('\n')
         lines = [line for line in lines if line]
@@ -33,7 +33,7 @@ def writting(cart_list):
             if pers not in split_persons:
                 split_persons.append(pers)
 
-
+    #Обработка списка пользователей и их корзины
     for per in products_per_person:
         lines = products_per_person[per].split('\n')
         lines = [line for line in lines if line]
