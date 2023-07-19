@@ -1,5 +1,4 @@
 import telebot
-import json
 from telebot import types
 from tg_token import token
 from cart_shop import writting
@@ -222,7 +221,7 @@ def telegram_bot(token):
 
 
 
-    @bot.message_handler(commands= ['shop', 'shopping'])
+    @bot.message_handler(commands= ['shop'])
     def working(message):
         person.clear()
         markup_inline = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -249,7 +248,7 @@ def telegram_bot(token):
 
     @bot.message_handler(commands=['start'])
     def start_message(message):
-        bot.send_message(message.chat.id, "Приветсвую тебя! Надеюсь я смогу помочь вам в организации покупок.\nДля начала работы пропишите в чате /shop или /shopping")
+        bot.send_message(message.chat.id, "Привет! Я помочь вам в организации покупок.\nДля начала работы пропишите в чате /shop")
 
 
     bot.polling()
