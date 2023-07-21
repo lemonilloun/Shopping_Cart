@@ -86,6 +86,14 @@ def telegram_bot(token):
     #splt_persons = []
     cart = Cart()
 
+
+    @bot.message_handler(commands=['clear'])
+    def reset(message):
+        person.clear()
+        cart.clear()
+        msg = bot.send_message(message.chat.id, "Все введенные значения были очищены.", reply_markup=types.ReplyKeyboardRemove())
+        bot.register_next_step_handler(msg, start_message)
+
     def check_prod_list(shop_list):
         enters = shop_list.count('\n')
         tabs = shop_list.count('-')
@@ -150,7 +158,7 @@ def telegram_bot(token):
             bot.send_message(message.chat.id, res)
             person.clear()
             cart.set_work_id(-1)
-            bot.send_message(message.chat.id, "Приятных покупок!\nДля создания новой корзины пропишите в чат /shop или /shopping", reply_markup=types.ReplyKeyboardRemove())
+            bot.send_message(message.chat.id, "Приятных покупок!\nДля создания новой корзины пропишите в чат /shop", reply_markup=types.ReplyKeyboardRemove())
         elif message.text == "Редактировать список для существующих пользователей":
             mrkp = types.ReplyKeyboardMarkup(resize_keyboard=True)
             for i in range(len(person)):
