@@ -199,10 +199,14 @@ def telegram_bot(token):
             bot.register_next_step_handler(msg, cart_processing)
 
         elif message.text == "Разделить продукт":
-            mrkp = types.ReplyKeyboardMarkup(resize_keyboard=True)
-            for i in range(len(person)):
-                if person[i] != person[cart.get_work_id()]:
-                    mrkp.add(types.KeyboardButton(str(person[i])))
+
+            if len(person) > 1:
+                mrkp = types.ReplyKeyboardMarkup(resize_keyboard=True)
+                for i in range(len(person)):
+                    if person[i] != person[cart.get_work_id()]:
+                        mrkp.add(types.KeyboardButton(str(person[i])))
+            else:
+                mrkp = types.ReplyKeyboardRemove()
             msg = bot.send_message(message.chat.id, "Выберите или напишите в чат с кем разделить стоимость продукта", reply_markup=mrkp)
             bot.register_next_step_handler(msg, split_products)
 
