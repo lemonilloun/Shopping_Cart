@@ -102,7 +102,7 @@ def telegram_bot(token):
             return False
 
         if enters > 1:
-            lines = shop_list.split('\n')
+            lines = shop_list.split('\n')[0:-1]
         # lines = [line for line in lines if line]
         else:
             lines = [shop_list[0:-1]]
